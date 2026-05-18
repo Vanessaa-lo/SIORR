@@ -3,6 +3,10 @@ from matplotlib.animation import FuncAnimation
 import numpy as np
 
 
+# ============================================================
+# GRAFICAR NODOS
+# Muestra la ubicación de los nodos generados
+# ============================================================
 def graficar_nodos(nodos):
     plt.figure()
 
@@ -22,12 +26,14 @@ def graficar_nodos(nodos):
     plt.show()
 
 
+# ============================================================
+# GRAFICAR RUTA
+# Anima el recorrido de la mejor ruta encontrada
+# ============================================================
 def graficar_ruta(nodos, ruta):
-    """
-    Anima el recorrido continuo de la ruta.
-    """
     figura, eje = plt.subplots()
 
+    # Dibujar nodos
     for indice, (x, y) in nodos.items():
         eje.scatter(x, y)
         eje.text(
@@ -41,6 +47,7 @@ def graficar_ruta(nodos, ruta):
     puntos_x = []
     puntos_y = []
 
+    # Generar puntos intermedios para animación suave
     for i in range(len(ruta_completa) - 1):
         nodo_inicio = nodos[ruta_completa[i]]
         nodo_fin = nodos[ruta_completa[i + 1]]
@@ -60,11 +67,7 @@ def graficar_ruta(nodos, ruta):
         puntos_x.extend(x_intermedios)
         puntos_y.extend(y_intermedios)
 
-    linea, = eje.plot(
-        [],
-        [],
-        linewidth=2
-    )
+    linea, = eje.plot([], [], linewidth=2)
 
     vehiculo, = eje.plot(
         [],
@@ -78,6 +81,7 @@ def graficar_ruta(nodos, ruta):
     eje.set_ylabel("Coordenada Y")
     eje.grid(True)
 
+    # Actualizar animación
     def actualizar(frame):
         linea.set_data(
             puntos_x[:frame + 1],
@@ -103,14 +107,15 @@ def graficar_ruta(nodos, ruta):
     plt.show()
 
 
+# ============================================================
+# GRAFICAR CONVERGENCIA
+# Compara evolución del fitness entre algoritmos
+# ============================================================
 def graficar_convergencia(
     historial_genetico,
     historial_tabu,
     historial_hibrido
 ):
-    """
-    Convergencia de algoritmos.
-    """
     plt.figure()
 
     plt.plot(
@@ -137,14 +142,15 @@ def graficar_convergencia(
     plt.show()
 
 
+# ============================================================
+# GRAFICAR COMPARACIÓN DE FITNESS
+# Muestra promedio de resultados obtenidos
+# ============================================================
 def graficar_comparacion(
     promedio_genetico,
     promedio_tabu,
     promedio_hibrido
 ):
-    """
-    Comparación de fitness promedio.
-    """
     algoritmos = [
         "Genético",
         "Tabú",
@@ -164,6 +170,7 @@ def graficar_comparacion(
         valores
     )
 
+    # Mostrar valores sobre barras
     for barra in barras:
         altura = barra.get_height()
 
@@ -181,14 +188,15 @@ def graficar_comparacion(
     plt.show()
 
 
+# ============================================================
+# GRAFICAR BOXPLOT
+# Muestra dispersión y robustez de resultados
+# ============================================================
 def graficar_boxplot(
     datos_genetico,
     datos_tabu,
     datos_hibrido
 ):
-    """
-    Distribución de resultados.
-    """
     plt.figure()
 
     plt.boxplot(
@@ -212,14 +220,15 @@ def graficar_boxplot(
     plt.show()
 
 
+# ============================================================
+# GRAFICAR TIEMPOS
+# Compara tiempo promedio de ejecución
+# ============================================================
 def graficar_tiempos(
     tiempo_genetico,
     tiempo_tabu,
     tiempo_hibrido
 ):
-    """
-    Comparación de tiempos promedio.
-    """
     algoritmos = [
         "Genético",
         "Tabú",
@@ -239,6 +248,7 @@ def graficar_tiempos(
         tiempos
     )
 
+    # Mostrar tiempos sobre barras
     for barra in barras:
         altura = barra.get_height()
 

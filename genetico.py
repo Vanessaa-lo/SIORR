@@ -2,34 +2,26 @@ import random
 from tsp import calcular_distancia_total
 
 
+
 def generar_poblacion(cantidad_poblacion, cantidad_nodos, generar_ruta_aleatoria):
-    """
-    Genera la población inicial.
-    """
     poblacion = []
 
-    for _ in range(cantidad_poblacion - 5):
+    for _ in range(cantidad_poblacion):
         poblacion.append(generar_ruta_aleatoria(cantidad_nodos))
 
     return poblacion
 
 
-def seleccionar_por_torneo(poblacion, nodos, tamaño_torneo=3):
-    """
-    Selecciona el mejor individuo mediante torneo.
-    """
+def seleccionar_por_torneo(poblacion, matriz_distancias, tamaño_torneo=3):
     participantes = random.sample(poblacion, tamaño_torneo)
 
     return min(
         participantes,
-        key=lambda ruta: calcular_distancia_total(ruta, nodos)
+        key=lambda ruta: calcular_distancia_total(ruta, matriz_distancias)
     )
 
 
 def cruce_ordenado(padre1, padre2):
-    """
-    Ordered Crossover (OX) manteniendo fijo el nodo 0.
-    """
     genes_padre1 = padre1[1:]
     genes_padre2 = padre2[1:]
 
@@ -58,9 +50,6 @@ def cruce_ordenado(padre1, padre2):
 
 
 def mutar(ruta, probabilidad_mutacion):
-    """
-    Mutación tipo 2-opt para mejorar rutas.
-    """
     if random.random() < probabilidad_mutacion:
         i = random.randint(1, len(ruta) - 2)
         j = random.randint(i + 1, len(ruta) - 1)
@@ -71,16 +60,13 @@ def mutar(ruta, probabilidad_mutacion):
 
 
 def ejecutar_genetico(
-    nodos,
+    matriz_distancias,
     cantidad_nodos,
     generar_ruta_aleatoria,
     cantidad_poblacion=80,
     generaciones=200,
     probabilidad_mutacion=0.1
 ):
-    """
-    Ejecuta el algoritmo genético.
-    """
     poblacion = generar_poblacion(
         cantidad_poblacion,
         cantidad_nodos,
@@ -89,20 +75,29 @@ def ejecutar_genetico(
 
     historial = []
 
-    for _ in range(generaciones):
+    for generacion in range(generaciones):
         nueva_poblacion = []
 
         elite = sorted(
             poblacion,
-            key=lambda ruta: calcular_distancia_total(ruta, nodos)
+            key=lambda ruta: calcular_distancia_total(
+                ruta,
+                matriz_distancias
+            )
         )[:5]
 
         nueva_poblacion.extend(elite)
-                
 
-        for _ in range(cantidad_poblacion):
-            padre1 = seleccionar_por_torneo(poblacion, nodos)
-            padre2 = seleccionar_por_torneo(poblacion, nodos)
+        for _ in range(cantidad_poblacion - 5):
+            padre1 = seleccionar_por_torneo(
+                poblacion,
+                matriz_distancias
+            )
+
+            padre2 = seleccionar_por_torneo(
+                poblacion,
+                matriz_distancias
+            )
 
             hijo = cruce_ordenado(padre1, padre2)
             hijo = mutar(hijo, probabilidad_mutacion)
@@ -112,7 +107,10 @@ def ejecutar_genetico(
         poblacion = nueva_poblacion
 
         mejor_distancia = min(
-            calcular_distancia_total(ruta, nodos)
+            calcular_distancia_total(
+                ruta,
+                matriz_distancias
+            )
             for ruta in poblacion
         )
 
@@ -120,7 +118,10 @@ def ejecutar_genetico(
 
     mejor_ruta = min(
         poblacion,
-        key=lambda ruta: calcular_distancia_total(ruta, nodos)
+        key=lambda ruta: calcular_distancia_total(
+            ruta,
+            matriz_distancias
+        )
     )
 
     return mejor_ruta, historial

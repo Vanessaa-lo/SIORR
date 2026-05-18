@@ -4,7 +4,7 @@ import math
 
 def generar_nodos(cantidad_nodos, limite_x=100, limite_y=100):
     """
-    Genera nodos aleatorios con coordenadas dentro de un área definida.
+    Genera nodos aleatorios.
     """
     nodos = {}
 
@@ -18,7 +18,7 @@ def generar_nodos(cantidad_nodos, limite_x=100, limite_y=100):
 
 def calcular_distancia(nodo_a, nodo_b):
     """
-    Calcula la distancia euclidiana entre dos nodos.
+    Distancia euclidiana entre dos nodos.
     """
     x1, y1 = nodo_a
     x2, y2 = nodo_b
@@ -26,29 +26,50 @@ def calcular_distancia(nodo_a, nodo_b):
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
-def calcular_distancia_total(ruta, nodos):
+def generar_matriz_distancias(nodos):
     """
-    Calcula la distancia total de una ruta cerrada.
+    Genera matriz de distancias precalculadas.
+    """
+    cantidad = len(nodos)
+
+    matriz = [[0 for _ in range(cantidad)] for _ in range(cantidad)]
+
+    for i in range(cantidad):
+        for j in range(cantidad):
+            if i != j:
+                matriz[i][j] = calcular_distancia(
+                    nodos[i],
+                    nodos[j]
+                )
+
+    return matriz
+
+
+def calcular_distancia_total(ruta, matriz_distancias):
+    """
+    Calcula distancia total usando matriz precalculada.
     """
     distancia_total = 0
 
     for i in range(len(ruta) - 1):
-        nodo_actual = nodos[ruta[i]]
-        nodo_siguiente = nodos[ruta[i + 1]]
+        distancia_total += matriz_distancias[
+            ruta[i]
+        ][
+            ruta[i + 1]
+        ]
 
-        distancia_total += calcular_distancia(nodo_actual, nodo_siguiente)
-
-    nodo_final = nodos[ruta[-1]]
-    nodo_inicial = nodos[ruta[0]]
-
-    distancia_total += calcular_distancia(nodo_final, nodo_inicial)
+    distancia_total += matriz_distancias[
+        ruta[-1]
+    ][
+        ruta[0]
+    ]
 
     return distancia_total
 
 
 def generar_ruta_aleatoria(cantidad_nodos):
     """
-    Genera una ruta aleatoria iniciando desde el nodo 0.
+    Genera ruta iniciando desde nodo 0.
     """
     ruta = list(range(1, cantidad_nodos))
     random.shuffle(ruta)

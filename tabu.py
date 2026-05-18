@@ -1,5 +1,5 @@
-import random
 from tsp import calcular_distancia_total
+import random
 
 
 def generar_vecino(ruta):
@@ -20,7 +20,7 @@ def generar_vecino(ruta):
 
 def ejecutar_tabu(
     ruta_inicial,
-    nodos,
+    matriz_distancias,
     iteraciones=300,
     tamaño_lista_tabu=20
 ):
@@ -28,21 +28,29 @@ def ejecutar_tabu(
     Ejecuta búsqueda tabú.
     """
     mejor_ruta = ruta_inicial[:]
-    mejor_distancia = calcular_distancia_total(mejor_ruta, nodos)
+    mejor_distancia = calcular_distancia_total(
+        mejor_ruta,
+        matriz_distancias
+    )
 
     ruta_actual = ruta_inicial[:]
     lista_tabu = []
     historial = []
+    iteraciones_sin_mejora = 0
+    limite_estancamiento = 120
 
     for _ in range(iteraciones):
         mejor_vecino = None
         mejor_movimiento = None
         mejor_distancia_vecino = float("inf")
-       
-        for _ in range(100):
+
+        for _ in range(80):
             vecino, movimiento = generar_vecino(ruta_actual)
 
-            distancia = calcular_distancia_total(vecino, nodos)
+            distancia = calcular_distancia_total(
+                vecino,
+                matriz_distancias
+            )
 
             if movimiento in lista_tabu and distancia >= mejor_distancia:
                 continue
@@ -51,15 +59,11 @@ def ejecutar_tabu(
                 mejor_vecino = vecino
                 mejor_movimiento = movimiento
                 mejor_distancia_vecino = distancia
-                mejor_vecino = vecino
-                mejor_movimiento = movimiento
-                mejor_distancia_vecino = distancia
 
         if mejor_vecino is None:
             continue
 
         ruta_actual = mejor_vecino
-
         lista_tabu.append(mejor_movimiento)
 
         if len(lista_tabu) > tamaño_lista_tabu:
@@ -68,7 +72,12 @@ def ejecutar_tabu(
         if mejor_distancia_vecino < mejor_distancia:
             mejor_ruta = mejor_vecino[:]
             mejor_distancia = mejor_distancia_vecino
-
+            iteraciones_sin_mejora = 0
+        else:
+            iteraciones_sin_mejora += 1
+            
         historial.append(mejor_distancia)
+        if iteraciones_sin_mejora >= limite_estancamiento:
+            break
 
     return mejor_ruta, historial

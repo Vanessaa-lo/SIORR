@@ -8,12 +8,17 @@ def graficar_nodos(nodos):
 
     for indice, (x, y) in nodos.items():
         plt.scatter(x, y)
-        plt.text(x + 1, y + 1, str(indice))
+        plt.text(
+            x + 1,
+            y + 1,
+            str(indice)
+        )
 
     plt.title("Nodos generados")
     plt.xlabel("Coordenada X")
     plt.ylabel("Coordenada Y")
     plt.grid(True)
+
     plt.show()
 
 
@@ -25,7 +30,11 @@ def graficar_ruta(nodos, ruta):
 
     for indice, (x, y) in nodos.items():
         eje.scatter(x, y)
-        eje.text(x + 1, y + 1, str(indice))
+        eje.text(
+            x + 1,
+            y + 1,
+            str(indice)
+        )
 
     ruta_completa = ruta + [ruta[0]]
 
@@ -36,14 +45,33 @@ def graficar_ruta(nodos, ruta):
         nodo_inicio = nodos[ruta_completa[i]]
         nodo_fin = nodos[ruta_completa[i + 1]]
 
-        x_intermedios = np.linspace(nodo_inicio[0], nodo_fin[0], 30)
-        y_intermedios = np.linspace(nodo_inicio[1], nodo_fin[1], 30)
+        x_intermedios = np.linspace(
+            nodo_inicio[0],
+            nodo_fin[0],
+            30
+        )
+
+        y_intermedios = np.linspace(
+            nodo_inicio[1],
+            nodo_fin[1],
+            30
+        )
 
         puntos_x.extend(x_intermedios)
         puntos_y.extend(y_intermedios)
 
-    linea, = eje.plot([], [], linewidth=2)
-    vehiculo, = eje.plot([], [], marker='o', markersize=8)
+    linea, = eje.plot(
+        [],
+        [],
+        linewidth=2
+    )
+
+    vehiculo, = eje.plot(
+        [],
+        [],
+        marker='o',
+        markersize=8
+    )
 
     eje.set_title("Recorrido de la ruta")
     eje.set_xlabel("Coordenada X")
@@ -67,8 +95,162 @@ def graficar_ruta(nodos, ruta):
         figura,
         actualizar,
         frames=len(puntos_x),
-        interval=50,
+        interval=20,
         repeat=False
     )
+
+    plt.draw()
+    plt.show()
+
+
+def graficar_convergencia(
+    historial_genetico,
+    historial_tabu,
+    historial_hibrido
+):
+    """
+    Convergencia de algoritmos.
+    """
+    plt.figure()
+
+    plt.plot(
+        historial_genetico,
+        label="Genético"
+    )
+
+    plt.plot(
+        historial_tabu,
+        label="Tabú"
+    )
+
+    plt.plot(
+        historial_hibrido,
+        label="Híbrido"
+    )
+
+    plt.title("Convergencia de algoritmos")
+    plt.xlabel("Iteraciones")
+    plt.ylabel("Fitness (distancia)")
+    plt.legend()
+    plt.grid(True)
+
+    plt.show()
+
+
+def graficar_comparacion(
+    promedio_genetico,
+    promedio_tabu,
+    promedio_hibrido
+):
+    """
+    Comparación de fitness promedio.
+    """
+    algoritmos = [
+        "Genético",
+        "Tabú",
+        "Híbrido"
+    ]
+
+    valores = [
+        promedio_genetico,
+        promedio_tabu,
+        promedio_hibrido
+    ]
+
+    plt.figure()
+
+    barras = plt.bar(
+        algoritmos,
+        valores
+    )
+
+    for barra in barras:
+        altura = barra.get_height()
+
+        plt.text(
+            barra.get_x() + barra.get_width() / 2,
+            altura + 5,
+            f"{altura:.2f}",
+            ha="center"
+        )
+
+    plt.title("Comparación de fitness promedio")
+    plt.ylabel("Distancia")
+    plt.grid(True, axis="y")
+
+    plt.show()
+
+
+def graficar_boxplot(
+    datos_genetico,
+    datos_tabu,
+    datos_hibrido
+):
+    """
+    Distribución de resultados.
+    """
+    plt.figure()
+
+    plt.boxplot(
+        [
+            datos_genetico,
+            datos_tabu,
+            datos_hibrido
+        ],
+        labels=[
+            "Genético",
+            "Tabú",
+            "Híbrido"
+        ],
+        showmeans=True
+    )
+
+    plt.title("Distribución de resultados")
+    plt.ylabel("Distancia")
+    plt.grid(True, axis="y")
+
+    plt.show()
+
+
+def graficar_tiempos(
+    tiempo_genetico,
+    tiempo_tabu,
+    tiempo_hibrido
+):
+    """
+    Comparación de tiempos promedio.
+    """
+    algoritmos = [
+        "Genético",
+        "Tabú",
+        "Híbrido"
+    ]
+
+    tiempos = [
+        tiempo_genetico,
+        tiempo_tabu,
+        tiempo_hibrido
+    ]
+
+    plt.figure()
+
+    barras = plt.bar(
+        algoritmos,
+        tiempos
+    )
+
+    for barra in barras:
+        altura = barra.get_height()
+
+        plt.text(
+            barra.get_x() + barra.get_width() / 2,
+            altura + 0.02,
+            f"{altura:.2f}s",
+            ha="center"
+        )
+
+    plt.title("Comparación de tiempos de ejecución")
+    plt.ylabel("Tiempo (segundos)")
+    plt.grid(True, axis="y")
 
     plt.show()
